@@ -27,22 +27,23 @@ url = "https://server.gowithmecs.site/api/v1/data"
 class ChargePoint(cp):
     cpID = ""
 
+    @on(Action.Authorize)
+    async def on_authorize(self, id_tag: str):
+        print("id_tag", id_tag)
+        print("--Authorize--")
+
+        Dict = {
+            "expiryDate": "",
+            "parentIdTag": "",
+            "status": "Accepted"
+        }
+
+        return call_result.AuthorizePayload(
+            'id_tag_info': Dict
+        )
+
     @on(Action.BootNotification)
-    def on_boot_notification(self, charge_point_vendor: str, charge_point_model: str, **kwargs):
-
-        # payload={
-        #     'sensor1': self.cpID,
-        #     'sensor2': charge_point_model,
-        #     'sensor3': charge_point_vendor,
-        #     'sensor4': kwargs["charge_point_serial_number"],
-        #     'sensor5': kwargs["firmware_version"],
-        # }
-        # files=[
-
-        # ]
-        # headers = {
-        # }
-        # response = requests.request("POST", url, headers=headers, data=payload, files=files)
+    async def on_boot_notification(self, charge_point_vendor: str, charge_point_model: str, **kwargs):
         
         payload={}
         headers = {
