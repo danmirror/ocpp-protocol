@@ -51,8 +51,6 @@ class ChargePoint(cp):
             'vendor': charge_point_vendor,
             'series': kwargs["charge_point_serial_number"],
             'firmware': kwargs["firmware_version"],
-            'meterType': kwargs["meter_type"],
-            'meterSerialNumber': kwargs["meter_serial_number"],
         # 'IDLog': 'avt014',
         }
 
@@ -79,7 +77,7 @@ class ChargePoint(cp):
         files=[
         ]
         headers = {
-            'IDLog': ChargePoint.cpID,
+            'IDLog': self.cpID,
         }
 
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
