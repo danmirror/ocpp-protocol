@@ -108,8 +108,8 @@ class ChargePoint(cp):
             'info': kwargs["info"],
             'status': status,
             'timestamp': kwargs["timestamp"],
-            'vendorId': kwargs["vendorId"],
-            'vendorErrorCode': kwargs["vendorErrorCode"],
+            'vendorId': kwargs["vendor_id"],
+            'vendorErrorCode': kwargs["vendor_error_code"],
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
