@@ -20,9 +20,10 @@ from ocpp.v16 import call_result
 import requests
 
 logging.basicConfig(level=logging.INFO)
+urls = "https://server.gowithmecs.site/api/v1/"
+
+# urls = "http://127.0.0.1:8000/api/v1/"
 # url = "http://ocpp.gowithmecs.site/connect.php"
-url = "https://server.gowithmecs.site/api/v1/data"
-# url = "http://127.0.0.1:8000/api/v1/data"
 # url = "http://localhost/iot-ocpp/connect.php"
 class ChargePoint(cp):
     cpID = ""
@@ -31,7 +32,7 @@ class ChargePoint(cp):
     async def on_authorize(self, id_tag: str):
         print("id_tag", id_tag)
         print("--Authorize--")
-        
+        url = urls+"authorize"
         Dict = {
             "expiryDate": "",
             "parentIdTag": "",
@@ -44,7 +45,10 @@ class ChargePoint(cp):
 
     @on(Action.BootNotification)
     async def on_boot_notification(self, charge_point_vendor: str, charge_point_model: str, **kwargs):
-        
+        # url = "http://127.0.0.1:8000/api/v1/"
+        url = urls+"bootnotification"
+
+        print(url)
         payload={}
         headers = {
             'model': charge_point_model,
@@ -72,6 +76,8 @@ class ChargePoint(cp):
         print(kwargs)
 
          # send
+        # url = "http://127.0.0.1:8000/api/v1/"
+        url = urls+"heartbeat"
         payload={
         
         }
@@ -91,6 +97,23 @@ class ChargePoint(cp):
     @on(Action.StatusNotification)
     async def on_status_notification(self, **kwargs):
         print('============= status notification =============')
+        # url = "http://127.0.0.1:8000/api/v1/"
+        url = urls+"statusnotification"
+        payload={}
+        headers = {
+            'IDST': self.cpID,
+            'connectorId': kwargs["connectorId"],
+            'errorCode': kwargs["errorCode"],
+            'info': kwargs["info"],
+            'status': kwargs["status"],
+            'timestamp': kwargs["timestamp"],
+            'vendorId': kwargs["vendorId"],
+            'vendorErrorCode': kwargs["vendorErrorCode"],
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
+
         return call_result.StatusNotificationPayload()
 
 
@@ -122,20 +145,7 @@ async def on_connect(websocket, path):
 
     ChargePoint.cpID = path.strip('/')
     cp = ChargePoint(ChargePoint.cpID, websocket)
-    print("abcxyz:", ChargePoint.cpID)
-
     
-    payload={
-    
-    }
-    files=[
-    ]
-    headers = {
-        'IDLog': ChargePoint.cpID,
-    }
-
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
-    print(response.text)
 
 
     await cp.start()
