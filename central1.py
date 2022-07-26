@@ -39,7 +39,7 @@ class ChargePoint(cp):
         }
 
         return call_result.AuthorizePayload(
-            'id_tag_info': Dict
+            id_tag_info= Dict
         )
 
     @on(Action.BootNotification)
