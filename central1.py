@@ -96,7 +96,7 @@ class ChargePoint(cp):
     
     @on(Action.StatusNotification)
     async def on_status_notification(self, connector_id: int,
-                                     error_code: str, status: str, vendorId: str, vendorErrorCode: str, **kwargs):
+                                     error_code: str, status: str, **kwargs):
         print('============= status notification =============')
         # url = "http://127.0.0.1:8000/api/v1/"
         url = urls+"statusnotification"
@@ -108,7 +108,7 @@ class ChargePoint(cp):
             'info': kwargs["info"],
             'status': status,
             'timestamp': kwargs["timestamp"],
-            'vendorId': vendorId,
+            'vendorId': kwargs["vendorId"],
             'vendorErrorCode': kwargs["vendorErrorCode"],
         }
 
