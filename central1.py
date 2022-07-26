@@ -31,7 +31,7 @@ class ChargePoint(cp):
     async def on_authorize(self, id_tag: str):
         print("id_tag", id_tag)
         print("--Authorize--")
-
+        
         Dict = {
             "expiryDate": "",
             "parentIdTag": "",
