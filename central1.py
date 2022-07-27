@@ -98,6 +98,16 @@ class ChargePoint(cp):
     async def on_status_notification(self, connector_id: int,
                                      error_code: str, status: str, **kwargs):
         print('============= status notification =============')
+
+        print("id ", connector_id)
+        print("error_code ", error_code)
+        print("status ", status)
+        print("info ",kwargs["info"])
+        print("id ", connector_id)
+        print("vendorId ", kwargs["vendor_id"])
+        print("vendorErrorCode ", kwargs["vendor_error_code"])
+
+
         # url = "http://127.0.0.1:8000/api/v1/"
         url = urls+"statusnotification"
         payload={}
@@ -107,7 +117,6 @@ class ChargePoint(cp):
             'errorCode': error_code,
             'info': kwargs["info"],
             'status': status,
-            'timestamp': kwargs["timestamp"],
             'vendorId': kwargs["vendor_id"],
             'vendorErrorCode': kwargs["vendor_error_code"],
         }
