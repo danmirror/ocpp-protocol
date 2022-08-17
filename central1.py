@@ -20,9 +20,11 @@ from ocpp.v16 import call_result
 import requests
 
 logging.basicConfig(level=logging.INFO)
-urls = "https://server.gowithmecs.site/api/v1/"
 
-# urls = "http://127.0.0.1:8000/api/v1/"
+# urls = "https://server.gowithmecs.site/api/v1/"
+
+urls = "http://127.0.0.1:8000/api/v1/"
+
 # url = "http://ocpp.gowithmecs.site/connect.php"
 # url = "http://localhost/iot-ocpp/connect.php"
 class ChargePoint(cp):
@@ -30,22 +32,105 @@ class ChargePoint(cp):
 
     @on(Action.Authorize)
     async def on_authorize(self, id_tag: str):
+        print('\n  ============= authorized=============')
         print("id_tag", id_tag)
-        print("--Authorize--")
-        url = urls+"authorize"
+        url = urls+"authorized"
+
+        # sen data
+        print(url)
+        payload={}
+        headers = {
+            'id_tag': id_tag
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
+
         Dict = {
             "expiryDate": "",
             "parentIdTag": "",
-            "status": "Accepted"
+            "status": response.json()["status"]
         }
 
         return call_result.AuthorizePayload(
             id_tag_info= Dict
         )
 
+    @on(Action.StartTransaction)
+    async def start_transaction(self, connector_id: int, id_tag: str, meter_start:int, reservation_id:int, **kwargs):
+        print('\n  ============= StartTransaction=============')
+
+        print("connector_id", connector_id)
+        print("id_tag", id_tag)
+        print("meter_start", meter_start)
+        print("reservation_id", reservation_id)
+        
+        
+        url = urls+"starttransaction"
+
+        # send data
+        print(url)
+        payload={}
+        headers = {
+            'connector_id': str(connector_id),
+            'id_tag': id_tag,
+            'meter_start': str(meter_start),
+            'reservation_id': str(reservation_id)
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
+
+        Dict = {
+            "expiryDate": "",
+            "parentIdTag": "",
+            "status": response.json()["status"]
+        }
+
+
+        return call_result.StartTransactionPayload(
+            transaction_id= 1,
+            id_tag_info= Dict
+        )
+
+    @on(Action.StopTransaction)
+    async def stop_transaction(self, id_tag: str, meter_stop:int, transaction_id:int, timestamp:str, **kwargs):
+        print('\n  ============= StopTransaction=============')
+
+        print("id_tag", id_tag)
+        print("meter_stop", meter_stop)
+        print("transaction_id", transaction_id)
+        
+        
+        url = urls+"stoptransaction"
+
+        # send data
+        print(url)
+        payload={}
+        headers = {
+            'id_tag': id_tag,
+            'meter_stop': str(meter_stop),
+            'transaction_id': str(transaction_id),
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
+
+        Dict = {
+            "expiryDate": "",
+            "parentIdTag": "",
+            "status": response.json()["status"]
+        }
+
+
+        return call_result.StopTransactionPayload(
+            id_tag_info= Dict
+        )
+
     @on(Action.BootNotification)
     async def on_boot_notification(self, charge_point_vendor: str, charge_point_model: str, **kwargs):
         # url = "http://127.0.0.1:8000/api/v1/"
+        print('\n  ============= BootNotification=============')
         url = urls+"bootnotification"
 
         print(url)
@@ -71,12 +156,10 @@ class ChargePoint(cp):
     @on(Action.Heartbeat)
     async def on_heartbeat(self, **kwargs):  # receives empty payload from CP
         
+        print('\n  ============= Heartbeat=============')
         print("id", self.cpID)
-        print("--HeartBeat--")
         print(kwargs)
 
-         # send
-        # url = "http://127.0.0.1:8000/api/v1/"
         url = urls+"heartbeat"
         payload={
         
@@ -97,7 +180,7 @@ class ChargePoint(cp):
     @on(Action.StatusNotification)
     async def on_status_notification(self, connector_id: int,
                                      error_code: str, status: str, **kwargs):
-        print('============= status notification =============')
+        print('\n ============= status notification =============')
 
         print("id ", connector_id)
         print("error_code ", error_code)
@@ -105,7 +188,6 @@ class ChargePoint(cp):
         print("info ",kwargs["info"])
         print("id ", connector_id)
         print("vendorId ", kwargs["vendor_id"])
-        print("vendorErrorCode ", kwargs["vendor_error_code"])
 
 
         # url = "http://127.0.0.1:8000/api/v1/"
@@ -113,12 +195,11 @@ class ChargePoint(cp):
         payload={}
         headers = {
             'IDST': self.cpID,
-            'connectorId': connector_id,
+            'connectorId': str(connector_id),
             'errorCode': error_code,
             'info': kwargs["info"],
             'status': status,
             'vendorId': kwargs["vendor_id"],
-            'vendorErrorCode': kwargs["vendor_error_code"],
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
