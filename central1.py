@@ -21,9 +21,9 @@ import requests
 
 logging.basicConfig(level=logging.INFO)
 
-# urls = "https://server.gowithmecs.site/api/v1/"
+urls = "https://server.gowithmecs.site/api/v1/"
 
-urls = "http://127.0.0.1:8000/api/v1/"
+# urls = "http://127.0.0.1:8000/api/v1/"
 
 # url = "http://ocpp.gowithmecs.site/connect.php"
 # url = "http://localhost/iot-ocpp/connect.php"
